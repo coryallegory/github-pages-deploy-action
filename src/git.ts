@@ -173,7 +173,9 @@ export async function deploy(): Promise<string> {
     `git commit -m "${
       !isNullOrUndefined(action.commitMessage)
         ? action.commitMessage
-        : `Deploying to ${action.branch} from ${action.baseBranch}`
+        : `Deploying to ${action.branch} from ${
+          action.baseBranch ? action.baseBranch : action.defaultBranch
+        }`
     } - ${process.env.GITHUB_SHA} 🚀" --quiet`,
     temporaryDeploymentDirectory
   );
