@@ -42,8 +42,8 @@ export async function init(): Promise<void> {
     await execute(`git init`, workspace);
     await execute(`git config user.name ${action.name}`, workspace);
     await execute(`git config user.email ${action.email}`, workspace);
-    await execute(`git remote add deployment-repo ${repositoryPath}`, workspace);
-    await execute(`git fetch deployment-repo`, workspace);
+    await execute(`git remote set-url origin ${repositoryPath}`, workspace);
+    await execute(`git fetch origin`, workspace);
   } catch (error) {
     console.log(`There was an error initializing the repository: ${error}`);
   } finally {
@@ -82,8 +82,8 @@ export async function generateBranch(): Promise<void> {
       `git commit --allow-empty -m "Initial ${action.branch} commit."`,
       workspace
     );
-    await execute(`git push deployment-repo ${action.branch}`, workspace);
-    await execute(`git fetch deployment-repo`, workspace);
+    await execute(`git push origin ${action.branch}`, workspace);
+    await execute(`git fetch origin`, workspace);
   } catch (error) {
     setFailed(`There was an error creating the deployment branch: ${error} ❌`);
   } finally {
@@ -102,7 +102,7 @@ export async function deploy(): Promise<string> {
       If the branch doesn't exist it gets created here as an orphan.
     */
   const branchExists = await execute(
-    `git ls-remote --heads deployment-repo ${action.branch} | wc -l`,
+    `git ls-remote --heads origin ${action.branch} | wc -l`,
     workspace
   );
   if (!branchExists && !action.isTest) {
@@ -112,9 +112,9 @@ export async function deploy(): Promise<string> {
 
   // Checks out the base branch to begin the deployment process.
   await switchToBaseBranch();
-  await execute(`git fetch deployment-repo`, workspace);
+  await execute(`git fetch origin`, workspace);
   await execute(
-    `git worktree add --checkout ${temporaryDeploymentDirectory} deployment-repo/${action.branch}`,
+    `git worktree add --checkout ${temporaryDeploymentDirectory} origin/${action.branch}`,
     workspace
   );
 
@@ -177,7 +177,7 @@ export async function deploy(): Promise<string> {
     temporaryDeploymentDirectory
   );
   await execute(
-    `git push --force deployment-repo ${temporaryDeploymentBranch}:${action.branch}`,
+    `git push --force origin ${temporaryDeploymentBranch}:${action.branch}`,
     temporaryDeploymentDirectory
   );
 
