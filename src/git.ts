@@ -83,7 +83,7 @@ export async function generateBranch(): Promise<void> {
       workspace
     );
     await execute(`git push deployment-repo ${action.branch}`, workspace);
-    await execute(`git fetch`, workspace);
+    await execute(`git fetch deployment-repo`, workspace);
   } catch (error) {
     setFailed(`There was an error creating the deployment branch: ${error} ❌`);
   } finally {
