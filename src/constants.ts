@@ -28,7 +28,7 @@ export const action = {
         "github-pages-deploy-action"}@users.noreply.github.com`,
   gitHubRepository: !isNullOrUndefined(getInput("REMOTE_REPOSITORY"))
     ? getInput("REMOTE_REPOSITORY")
-    : repository && repository.full_name
+    : (repository && repository.full_name)
     ? repository.full_name
     : process.env.GITHUB_REPOSITORY,
   gitHubToken: getInput("GITHUB_TOKEN"),
